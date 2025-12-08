@@ -1,11 +1,11 @@
 package aoc2025.day8;
 
-public record Point3D(int x, int y , int z) {
+public record Point3D(int x, int y , int z, String positionStr) {
 
   public Point3D(String positionStr) {
     this(Integer.parseInt(positionStr.split(",")[0]),
     Integer.parseInt(positionStr.split(",")[1]),
-    Integer.parseInt(positionStr.split(",")[2]));
+    Integer.parseInt(positionStr.split(",")[2]), positionStr);
   }
 
   double distanceSquared(Point3D b) {
@@ -14,4 +14,9 @@ public record Point3D(int x, int y , int z) {
     double dz = this.z() - b.z();
     return dx*dx + dy*dy + dz*dz;
   }
+
+    @Override
+    public String toString() {
+        return positionStr;
+    }
 }
