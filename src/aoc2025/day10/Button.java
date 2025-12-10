@@ -1,14 +1,23 @@
 package aoc2025.day10;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-public class Button {
+public record Button(List<Integer> lightsChanged, int bitMask) {
 
-  Set<Integer> lightsChanged = new HashSet<>();
-  public Button(String btns) {
-    lightsChanged.addAll(Arrays.stream(btns.split(",")).map(Integer::parseInt).toList());
-  }
+    public Button(String btns,  int nbLights) {
+        List<Integer> parsed = Arrays.stream(btns.split(","))
+                .map(Integer::parseInt)
+                .toList();
 
+        this(parsed, getBitMask(parsed, nbLights));
+    }
+
+    private static int getBitMask(List<Integer> lightsChanged, int nbLights) {
+        int res = 0;
+        for (Integer integer : lightsChanged) {
+            res |= 1 << (nbLights - integer - 1);
+        }
+        return res;
+    }
 }

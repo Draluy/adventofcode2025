@@ -6,24 +6,67 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class Machine {
 
-  private static final Pattern lightsAndJoltages = Pattern.compile("^\\[(?<lights>[.|#]+)\\].*?\\{(?<joltages>(\\d+\\,?)+)\\}$");
-  private static final Pattern buttonsPattern = Pattern.compile("\\((?<btns>[0-9,]+)\\)");
-  private final List<Boolean> lights = new ArrayList<>();
-  private final List<Integer> joltages = new LinkedList<>();
-  private final List<Button> buttons = new LinkedList<>();
+    private final int targetLights;
+    private final List<Button> buttons = new ArrayList<>();
 
-  public Machine(String l) {
-    Matcher matcher = lightsAndJoltages.matcher(l);
-    if (matcher.find()) {
-      this.lights.addAll(Arrays.stream(matcher.group("lights").split("")).map("#"::equals).toList());
-      this.joltages.addAll(Arrays.stream(matcher.group("joltages").split(",")).map(Integer::parseInt).toList());
+    int leastPushes = Integer.MAX_VALUE;
+
+    public Machine(String l) {
+        var machineParser = new MachineParser(l);
+        this.targetLights = machineParser.getLights();
+        this.buttons.addAll(machineParser.getButtons());
     }
-    Matcher buttonsMatcher = buttonsPattern.matcher(l);
-    while (buttonsMatcher.find()) {
-      buttons.add( new Button(buttonsMatcher.group("btns")));
+
+
+    public int getLeastPushes() {
+        return leastPushes;
     }
-  }
+
+    public void pushButtons() {
+        int lights = 0;
+
+        List<Button> pushedButtons = new LinkedList<>();
+        pushButtons(lights, pushedButtons);
+    }
+
+    private void pushButtons(int lights, List<Button> pushedButtons) {
+        List<Button> newButtons = new ArrayList<>(buttons);
+        newButtons.removeAll(pushedButtons);
+
+        for (int i = 0; i < newButtons.size(); i++) {
+            Button button = newButtons.get(i);
+            pushedButtons.add(button);
+            pushButtons(lights, pushedButtons);
+
+            lights |= button.bitMask();
+            System.out.println("Pushing button: " + button + " result is " + lights + " target is " + targetLights);
+        }
+    }
+
+//    private void pushButtonsInThisOrder(Button[] pushes) {
+//        Boolean[] array = new Boolean[targetLightsArray.length];
+//        Arrays.fill(array, false);
+//
+//        int nbPushes = 0;
+//
+//        for (Button push : pushes) {
+//            nbPushes++;
+//            for(Integer lightIndex : push.lightsChanged()){
+//                array[lightIndex] = !array[lightIndex];
+//            }
+//            boolean allLightsOk = Arrays.equals(array, targetLightsArray);
+//            if(allLightsOk){
+//                if(leastPushes > nbPushes) {
+//                    System.out.println("pushed times = " + nbPushes + " with "+ Arrays.toString(pushes));
+//                    leastPushes = nbPushes;
+//                }
+//                return;
+//            }
+//        }
+//    }
+
 }
