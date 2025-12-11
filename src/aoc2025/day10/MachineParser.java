@@ -34,7 +34,7 @@ public record MachineParser (String line){
         int res=0;
         for (int i = 0; i < lightsChars.length; i++) {
             if (lightsChars[i].equals("#")) {
-                res = res | 1 << i;
+                res = res | 1 << lightsChars.length - i - 1;
             }
         }
         return res;

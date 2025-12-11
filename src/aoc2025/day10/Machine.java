@@ -30,35 +30,28 @@ public class Machine {
   }
 
   public void pushButtons() {
-    List<Button> buttonsPushed = pushButtons(0, buttons, new ArrayList<>());
-    System.out.println("Best result was "+buttonsPushed);
+    pushButtons(0, buttons, new ArrayList<>());
   }
 
-  private List<Button> pushButtons(int lights, List<Button> bToPush, List<Button> bPushed) {
-    // System.out.println("pushButtons called with light " + intASStr(lights, nbLights) + " with buttonsToPush "+ bToPush);
-
-    List<Button> bestResult = new ArrayList<>();
+  private void pushButtons(int lights, List<Button> bToPush, List<Button> bPushed) {
     for (Button button : bToPush) {
-
       int newLights = lights ^ button.bitMask();
       List<Button> buttonsPushed = new ArrayList<>(bPushed);
       List<Button> buttonsToPush = new ArrayList<>(bToPush);
       buttonsPushed.add(button);
       buttonsToPush.remove(button);
-      List<Button> btns = pushButtons(newLights, buttonsToPush, buttonsPushed);
-      System.out.println("Pushed button: " + button +  " from " + intASStr(newLights, nbLights) + " result is " + intASStr(newLights, nbLights) + " target is " +  intASStr(targetLights, nbLights));
+
+      // System.out.println("[depth "+bPushed.size()+"] Pushed button: " + button +  " from " + intASStr(lights, nbLights) + " result is " + intASStr(newLights, nbLights) + " target is " +  intASStr(targetLights, nbLights));
 
       if (newLights == targetLights) {
-        return buttonsPushed;
+          if(leastPushes > buttonsPushed.size()) {
+              leastPushes = buttonsPushed.size();
+          }
+          // System.out.println("FOUND!!!!");
+          continue;
       }
-
-//      List<Button> btns = pushButtons(newLights, buttonsToPush, buttonsPushed);
-//      if (btns.isEmpty() || btns.size() < bestResult.size()) {
-//        bestResult = btns;
-//        return btns;
-//      }
+      pushButtons(newLights, buttonsToPush, buttonsPushed);
     }
-    return bestResult;
   }
 
   String intASStr(int i, int nblights) {
