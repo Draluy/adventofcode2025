@@ -14,7 +14,7 @@ public class ButtonPusher {
             var machine = machines.get(i);
 
             machine.pushButtons();
-            System.out.println("Pushed machine " + i);
+            System.out.println("Pushed machine " + i + " least pushes "+ machine.getLeastPushes());
             leastPushes.add(machine.getLeastPushes());
         }
     }

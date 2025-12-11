@@ -10,42 +10,60 @@ import java.util.stream.Stream;
 
 public class Machine {
 
-    private final int targetLights;
-    private final List<Button> buttons = new ArrayList<>();
+  private final int targetLights;
+  private final List<Button> buttons = new ArrayList<>();
+  private final int nbLights;
 
-    int leastPushes = Integer.MAX_VALUE;
+  int leastPushes = Integer.MAX_VALUE;
 
-    public Machine(String l) {
-        var machineParser = new MachineParser(l);
-        this.targetLights = machineParser.getLights();
-        this.buttons.addAll(machineParser.getButtons());
+  public Machine(String l) {
+    var machineParser = new MachineParser(l);
+    this.targetLights = machineParser.getLights();
+    this.nbLights = machineParser.getNbLights();
+    this.buttons.addAll(machineParser.getButtons());
+    leastPushes = Integer.MAX_VALUE;
+  }
+
+
+  public int getLeastPushes() {
+    return leastPushes;
+  }
+
+  public void pushButtons() {
+    List<Button> buttonsPushed = pushButtons(0, buttons, new ArrayList<>());
+    System.out.println("Best result was "+buttonsPushed);
+  }
+
+  private List<Button> pushButtons(int lights, List<Button> bToPush, List<Button> bPushed) {
+    // System.out.println("pushButtons called with light " + intASStr(lights, nbLights) + " with buttonsToPush "+ bToPush);
+
+    List<Button> bestResult = new ArrayList<>();
+    for (Button button : bToPush) {
+
+      int newLights = lights ^ button.bitMask();
+      List<Button> buttonsPushed = new ArrayList<>(bPushed);
+      List<Button> buttonsToPush = new ArrayList<>(bToPush);
+      buttonsPushed.add(button);
+      buttonsToPush.remove(button);
+      List<Button> btns = pushButtons(newLights, buttonsToPush, buttonsPushed);
+      System.out.println("Pushed button: " + button +  " from " + intASStr(newLights, nbLights) + " result is " + intASStr(newLights, nbLights) + " target is " +  intASStr(targetLights, nbLights));
+
+      if (newLights == targetLights) {
+        return buttonsPushed;
+      }
+
+//      List<Button> btns = pushButtons(newLights, buttonsToPush, buttonsPushed);
+//      if (btns.isEmpty() || btns.size() < bestResult.size()) {
+//        bestResult = btns;
+//        return btns;
+//      }
     }
+    return bestResult;
+  }
 
-
-    public int getLeastPushes() {
-        return leastPushes;
-    }
-
-    public void pushButtons() {
-        int lights = 0;
-
-        List<Button> pushedButtons = new LinkedList<>();
-        pushButtons(lights, pushedButtons);
-    }
-
-    private void pushButtons(int lights, List<Button> pushedButtons) {
-        List<Button> newButtons = new ArrayList<>(buttons);
-        newButtons.removeAll(pushedButtons);
-
-        for (int i = 0; i < newButtons.size(); i++) {
-            Button button = newButtons.get(i);
-            pushedButtons.add(button);
-            pushButtons(lights, pushedButtons);
-
-            lights |= button.bitMask();
-            System.out.println("Pushing button: " + button + " result is " + lights + " target is " + targetLights);
-        }
-    }
+  String intASStr(int i, int nblights) {
+    return String.format("%"+nblights+"s", Integer.toBinaryString(i)).replace(' ', '0');
+  }
 
 //    private void pushButtonsInThisOrder(Button[] pushes) {
 //        Boolean[] array = new Boolean[targetLightsArray.length];

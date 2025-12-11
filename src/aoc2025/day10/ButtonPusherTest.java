@@ -17,4 +17,13 @@ class ButtonPusherTest {
     System.out.println(bp.fewerPushes());
   }
 
+  @Test
+  void simpleTest(){
+    String text = """
+[.##.] (2) (0,2) (0,1) {3,5,4,7}
+""";
+    ButtonPusher bp = new ButtonPusher(text.lines().toList());
+    System.out.println(bp.fewerPushes());
+  }
+
 }

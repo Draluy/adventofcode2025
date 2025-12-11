@@ -20,4 +20,9 @@ public record Button(List<Integer> lightsChanged, int bitMask) {
         }
         return res;
     }
+
+    @Override
+    public String toString() {
+        return ""+lightsChanged;
+    }
 }
