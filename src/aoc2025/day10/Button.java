@@ -23,6 +23,6 @@ public record Button(List<Integer> lightsChanged, int bitMask) {
 
     @Override
     public String toString() {
-        return ""+lightsChanged;
+        return ""+Integer.toBinaryString(bitMask);
     }
 }
