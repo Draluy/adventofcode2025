@@ -1,7 +1,6 @@
 package aoc2025.day10;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public record Button(List<Integer> lightsChanged, int bitMask) {
 
@@ -24,5 +23,16 @@ public record Button(List<Integer> lightsChanged, int bitMask) {
     @Override
     public String toString() {
         return ""+Integer.toBinaryString(bitMask);
+    }
+
+    public boolean affectsAnyRemainingLight(Joltages state, Joltages targetJoltages) {
+        Set<Integer> remainingvalues = new HashSet<>();
+        for (int i = 0; i < state.size(); i++) {
+            if (state.get(i) != targetJoltages.get(i)) {
+                remainingvalues.add(i);
+            }
+        }
+
+        return remainingvalues.containsAll(this.lightsChanged());
     }
 }

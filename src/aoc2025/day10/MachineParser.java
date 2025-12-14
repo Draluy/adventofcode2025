@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public record MachineParser (String line){
+public record MachineParser(String line) {
     private static final Pattern lightsAndJoltages = Pattern.compile("^\\[(?<lights>[.|#]+)\\].*?\\{(?<joltages>(\\d+\\,?)+)\\}$");
     private static final Pattern buttonsPattern = Pattern.compile("\\((?<btns>[0-9,]+)\\)");
 
@@ -16,10 +16,11 @@ public record MachineParser (String line){
         return getBitMask(matcher.group("lights").split(""));
     }
 
-    public List<Integer> joltages() {
+    public Joltages joltages() {
         Matcher matcher = lightsAndJoltages.matcher(line);
         matcher.find();
-        return Arrays.stream(matcher.group("joltages").split(",")).map(Integer::valueOf).toList();
+        int[] joltages = Arrays.stream(matcher.group("joltages").split(",")).mapToInt(Integer::parseInt).toArray();
+        return new Joltages(joltages);
     }
 
 
@@ -39,7 +40,7 @@ public record MachineParser (String line){
     }
 
     private int getBitMask(String[] lightsChars) {
-        int res=0;
+        int res = 0;
         for (int i = 0; i < lightsChars.length; i++) {
             if (lightsChars[i].equals("#")) {
                 res = res | 1 << lightsChars.length - i - 1;

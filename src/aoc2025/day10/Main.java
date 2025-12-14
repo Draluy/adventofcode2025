@@ -11,7 +11,7 @@ public class Main {
 
     List<String> lines = Files.readAllLines(Paths.get("src/aoc2025/day10/machines.txt"));
     ButtonPusher bp = new ButtonPusher(lines);
-
+    bp.part2();
     System.out.println(bp.fewerPushes());
   }
 }
